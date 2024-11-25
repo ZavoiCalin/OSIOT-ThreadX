@@ -1,0 +1,43 @@
+# Compiler
+CC = gcc
+
+# Directories
+SRC_DIR = .
+BUILD_DIR = ./build
+
+# Output executable
+TARGET = iothub_app
+
+# Source files
+SRCS = $(SRC_DIR)/tx_application.c $(SRC_DIR)/iot_hub_connection.c $(SRC_DIR)/main.c
+
+# Object files
+OBJS = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(SRCS))
+
+# Include paths
+INCLUDES = -I.
+
+# Libraries to link
+LIBS = -lpaho-mqtt3cs -lpthread -lssl -lcrypto
+
+# Compiler flags
+CFLAGS = -Wall -g $(INCLUDES)
+
+# Default rule
+all: $(BUILD_DIR) $(TARGET)
+
+# Create build directory if it doesn't exist
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
+
+# Rule to build the target
+$(TARGET): $(OBJS)
+	$(CC) -o $@ $^ $(LIBS)
+
+# Rule to build object files
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# Clean rule
+clean:
+	rm -rf $(BUILD_DIR) $(TARGET)
